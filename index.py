@@ -40,7 +40,7 @@ class LoginTool(BaseTool):
      def _run(self) -> str:
         try:
             with sync_playwright() as playwright:
-                browser=playwright.chromium.launch(headless=False,slow_mo=2000)
+                browser=playwright.chromium.launch(headless=True,slow_mo=2000)
                 context=browser.new_context()
                 page=context.new_page()
                 page.goto("https://www.notion.com/")
@@ -125,7 +125,7 @@ agent=Agent(
 
 task=Task(
      description="Go and login for me in notion website",
-     expected_output="A message that gives idea about the completion of event in a structured manner",
+     expected_output="A message that gives idea about the completion of event in a structured manner.Output should be a object with status, message and details about login task in differnt lines",
      agent=agent
 )
 
