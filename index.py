@@ -11,14 +11,28 @@ from crewai import LLM
 
 load_dotenv()
 ################################################### Just testing gemini
-# genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# model=genai.GenerativeModel("gemini-2.0-flash")
+model=genai.GenerativeModel("gemini-2.0-flash")
 
 # print(model.generate_content("Hello how are you").text)
+
+# with open("output.png","rb") as f:
+#     image_bytes=f.read()
+#     print(type(image_bytes))
+
+
+# response = model.generate_content(
+#     [
+#         {"mime_type":"image/png","data":image_bytes},
+#         "Try to extract text from image and interpret whether the login was sucessful or not."
+#     ]
+# )
+
+# print(response.text)
 ##################################################################
 
-
+print("-----------------------------------------")
 class LoginTool(BaseTool):
      name: str="login_tool"
      description:str="A tool that logs into Notion using Playwright and returns the resulting message from the Google sign-in page."
@@ -51,12 +65,28 @@ class LoginTool(BaseTool):
 
                 Next=google_page.get_by_text("Next")
                 Next.click()
-                google_page.screenshot(path="output.png")
-                output=google_page.locator("div.dMNVAe")
-                output1=output.all_inner_texts()
-                print(output1)
                 time.sleep(5)
-                return output1
+                google_page.screenshot(path="output.png")
+                # output=google_page.locator("div.dMNVAe")
+                # output1=output.all_inner_texts()
+                
+                # result="".join(output1)
+                # print(result)
+                with open("output.png","rb") as f:
+                    image_bytes=f.read()
+
+                response=model.generate_content([
+                    {
+                        "mime_type":"image/png",
+                        "data":image_bytes
+                    },
+                    "Try to extract text from image and interpret whether the login was sucessful or not and clearly state if successful or unsuccessful and also what went wrong."
+                ])
+
+                result=response.text
+                return result
+                
+                
         
         except Exception as e:
             return "Error while login"
