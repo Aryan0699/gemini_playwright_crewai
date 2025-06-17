@@ -40,7 +40,7 @@ class LoginTool(BaseTool):
      def _run(self) -> str:
         try:
             with sync_playwright() as playwright:
-                browser=playwright.chromium.launch(headless=False,slow_mo=200)
+                browser=playwright.chromium.launch(headless=False,slow_mo=2000)
                 context=browser.new_context()
                 page=context.new_page()
                 page.goto("https://www.notion.com/")
@@ -84,6 +84,7 @@ class LoginTool(BaseTool):
                 ])
 
                 result=response.text
+                print("result of tool : " ,result)
                 return result
                 
                 
